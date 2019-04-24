@@ -1,12 +1,16 @@
 # {{ template.lambda_name }}
 
-This is a sample template for go-lambda-template-local - Below is a brief explanation of what we have generated for you:
+This is a [Cookiecutter](https://github.com/audreyr/cookiecutter) template to create a Serverless App based on Serverless Application Model (SAM) and Go.
+
+It is important to note that you should not try to `git clone` this project but use `cookiecutter` CLI instead as ``{{cookiecutter.project_slug}}`` will be rendered based on your input and therefore all variables and files will be rendered properly.
+
+This is a sample template for {{ cookiecutter.lambda_name }} - Below is a brief explanation of what we have generated for you:
 
 ```bash
 .
 ├── Makefile                    <-- Make to automate build
 ├── README.md                   <-- This instructions file
-├── {{ template.lambda_name }}  <-- Source code for a lambda function
+├── {{ cookiecutter.lambda_name }}  <-- Source code for a lambda function
 │   ├── main.go                 <-- Lambda function code
 │   └── main_test.go            <-- Unit tests
 └── template.yaml
@@ -37,7 +41,7 @@ Golang is a statically compiled language, meaning that in order to run it you ha
 You can issue the following command in a shell to build it:
 
 ```shell
-GOOS=linux GOARCH=amd64 go build -o {{ template.lambda_name }}/{{ template.lambda_name }} ./{{ template.lambda_name }}
+GOOS=linux GOARCH=amd64 go build -o {{ cookiecutter.lambda_name }}/{{ cookiecutter.lambda_name }} ./{{cookiecutter.lambda_name }}
 ```
 
 **NOTE**: If you're not building the function on a Linux machine, you will need to specify the `GOOS` and `GOARCH` environment variables, this allows Golang to build your function for another system architecture and ensure compatibility.
@@ -96,7 +100,7 @@ Next, the following command will create a Cloudformation Stack and deploy your S
 ```bash
 sam deploy \
     --template-file packaged.yaml \
-    --stack-name go-lambda-template-local \
+    --stack-name {{ cookiecutter.lambda_name }} \
     --capabilities CAPABILITY_IAM
 ```
 
@@ -106,7 +110,7 @@ After deployment is complete you can run the following command to retrieve the A
 
 ```bash
 aws cloudformation describe-stacks \
-    --stack-name go-lambda-template-local \
+    --stack-name {{ cookiecutter.lambda_name }} \
     --query 'Stacks[].Outputs'
 ``` 
 
@@ -115,7 +119,7 @@ aws cloudformation describe-stacks \
 We use `testing` package that is built-in in Golang and you can simply run the following command to run our tests:
 
 ```shell
-go test -v ./{{ template.lambda_name }}/
+go test -v ./{{ cookiecutter.lambda_name }}/
 ```
 # Appendix
 
@@ -165,12 +169,12 @@ sam package \
 
 sam deploy \
     --template-file packaged.yaml \
-    --stack-name go-lambda-template-local \
+    --stack-name {{ cookiecutter.lambda_name }} \
     --capabilities CAPABILITY_IAM \
     --parameter-overrides MyParameterSample=MySampleValue
 
 aws cloudformation describe-stacks \
-    --stack-name go-lambda-template-local --query 'Stacks[].Outputs'
+    --stack-name {{ cookiecutter.lambda_name }} --query 'Stacks[].Outputs'
 ```
 
 ## Bringing to the next level

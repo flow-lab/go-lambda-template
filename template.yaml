@@ -1,9 +1,9 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  go-lambda-template-local
+  {{ cookiecutter.lambda_name }}
   
-  Sample SAM Template for go-lambda-template-local
+  Sample SAM Template for {{ cookiecutter.lambda_name }}
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
@@ -14,8 +14,8 @@ Resources:
   HelloWorldFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: {{ template.lambda_name }}/
-      Handler: {{ template.lambda_name }}
+      CodeUri: {{ cookiecutter.lambda_name }}/
+      Handler: {{ cookiecutter.lambda_name }}
       Runtime: go1.x
       Tracing: Active # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
       Events:
