@@ -1,9 +1,9 @@
 {
-    "lambda_name": "lambda",
-    "project_name": "Name of the project",
+    "project_name": "my-go-lambda",
     "project_short_description": "A short description of the project",
+    "lambda_name": "lambda",
     "include_apigw": "y",
     "include_xray": "y",
     "include_safe_deployment": "y",
-    "include_experimental_make": "n"
+    "include_experimental_make": "y"
 }
