@@ -73,7 +73,7 @@ AWS Lambda Python runtime requires a flat folder with all dependencies including
     FirstFunction:
         Type: AWS::Serverless::Function
         Properties:
-            CodeUri: hello_world/
+            CodeUri: {{ cookiecutter.lambda_name }}/
             ...
 ```
 
@@ -172,15 +172,3 @@ sam deploy \
 aws cloudformation describe-stacks \
     --stack-name {{ cookiecutter.lambda_name }} --query 'Stacks[].Outputs'
 ```
-
-## Bringing to the next level
-
-Here are a few ideas that you can use to get more acquainted as to how this overall process works:
-
-* Create an additional API resource (e.g. /hello/{proxy+}) and return the name requested through this new path
-* Update unit test to capture that
-* Package & Deploy
-
-Next, you can use the following resources to know more about beyond hello world samples and how others structure their Serverless applications:
-
-* [AWS Serverless Application Repository](https://aws.amazon.com/serverless/serverlessrepo/)
