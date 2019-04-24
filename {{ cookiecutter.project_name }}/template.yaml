@@ -9,6 +9,10 @@ Description: >
 Globals:
   Function:
     Timeout: 5
+{%- if cookiecutter.include_safe_deployment == "y" %}
+    AutoPublishAlias: live # More info about Safe Deployments: https://github.com/awslabs/serverless-application-model/blob/master/docs/safe_lambda_deployments.rst
+    DeploymentPreference:
+        Type: Linear10PercentEvery1Minute {% endif %}
 
 Resources:
   {{ cookiecutter.lambda_name }}Function:
@@ -17,24 +21,43 @@ Resources:
       CodeUri: {{ cookiecutter.lambda_name }}/
       Handler: {{ cookiecutter.lambda_name }}
       Runtime: go1.x
-      Tracing: Active # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
+{%- if cookiecutter.include_xray == "y" %}
+      Tracing: Active {% endif %} # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
+{%- if cookiecutter.include_apigw == "y" %}
       Events:
         CatchAll:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /hello
-            Method: GET
+            Method: GET {% endif %}
       Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
         Variables:
           PARAM1: VALUE
 
+    # Sample policy to add additional permissions to your Lambda
+    {{ cookiecutter.lambda_name }}FunctionAdditionalPermission:
+        Type: "AWS::IAM::Policy"
+        Properties:
+            PolicyName: "root"
+            PolicyDocument:
+                Version: "2012-10-17"
+                Statement:
+                    -
+                        Effect: "Allow"
+                        Action: "ssm:GetParameters"
+                        Resource: "*"
+            Roles:
+                - !Ref {{ cookiecutter.lambda_name }}FunctionRole # Sample policy to demonstrate Implicit IAM Role created with SAM
+
 Outputs:
+{% if cookiecutter.include_apigw == "y"%}
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   HelloWorldAPI:
     Description: "API Gateway endpoint URL for Prod environment for First Function"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+{%- endif %}
   HelloWorldFunction:
     Description: "First Lambda Function ARN"
     Value: !GetAtt {{ cookiecutter.lambda_name }}Function.Arn
