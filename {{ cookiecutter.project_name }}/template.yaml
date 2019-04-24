@@ -3,7 +3,7 @@ Transform: AWS::Serverless-2016-10-31
 Description: >
   {{ cookiecutter.lambda_name }} 
   
-  Sample SAM Template for {{ cookiecutter.lambda_name }} - {{ cookiecutter.project_short_description }} 
+  SAM Template for {{ cookiecutter.lambda_name }} - {{ cookiecutter.project_short_description }} 
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
@@ -54,13 +54,13 @@ Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  HelloWorldAPI:
-    Description: "API Gateway endpoint URL for Prod environment for First Function"
+  API:
+    Description: "API Gateway endpoint URL for Prod environment for {{ cookiecutter.lambda_name }}Function"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
 {%- endif %}
-  HelloWorldFunction:
-    Description: "First Lambda Function ARN"
+  {{ cookiecutter.lambda_name }}Function:
+    Description: "Function ARN for {{ cookiecutter.lambda_name }}Function"
     Value: !GetAtt {{ cookiecutter.lambda_name }}Function.Arn
-  HelloWorldFunctionIamRole:
-    Description: "Implicit IAM Role created for Hello World function"
+  {{ cookiecutter.lambda_name }}FunctionRole:
+    Description: "Implicit IAM Role created for {{ cookiecutter.lambda_name }} function"
     Value: !GetAtt {{ cookiecutter.lambda_name }}FunctionRole.Arn
