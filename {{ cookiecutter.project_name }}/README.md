@@ -6,7 +6,7 @@ This is a sample template for {{ cookiecutter.lambda_name }} - Below is a brief 
 .
 ├── Makefile                    <-- Make to automate build
 ├── README.md                   <-- This instructions file
-├── {{ cookiecutter.lambda_name }}                       <-- Source code for a lambda function
+├── {{ cookiecutter.lambda_name }}                      <-- Source code for a lambda function
 │   ├── main.go                 <-- Lambda function code
 │   └── main_test.go            <-- Unit tests
 └── template.yaml
