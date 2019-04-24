@@ -1,4 +1,4 @@
-# go-lambda-template-local
+# {{ template.lambda_name }}
 
 This is a sample template for go-lambda-template-local - Below is a brief explanation of what we have generated for you:
 
@@ -6,7 +6,7 @@ This is a sample template for go-lambda-template-local - Below is a brief explan
 .
 ├── Makefile                    <-- Make to automate build
 ├── README.md                   <-- This instructions file
-├── hello-world                 <-- Source code for a lambda function
+├── {{ template.lambda_name }}  <-- Source code for a lambda function
 │   ├── main.go                 <-- Lambda function code
 │   └── main_test.go            <-- Unit tests
 └── template.yaml
@@ -37,7 +37,7 @@ Golang is a statically compiled language, meaning that in order to run it you ha
 You can issue the following command in a shell to build it:
 
 ```shell
-GOOS=linux GOARCH=amd64 go build -o hello-world/hello-world ./hello-world
+GOOS=linux GOARCH=amd64 go build -o {{ template.lambda_name }}/{{ template.lambda_name }} ./{{ template.lambda_name }}
 ```
 
 **NOTE**: If you're not building the function on a Linux machine, you will need to specify the `GOOS` and `GOARCH` environment variables, this allows Golang to build your function for another system architecture and ensure compatibility.
@@ -115,7 +115,7 @@ aws cloudformation describe-stacks \
 We use `testing` package that is built-in in Golang and you can simply run the following command to run our tests:
 
 ```shell
-go test -v ./hello-world/
+go test -v ./{{ template.lambda_name }}/
 ```
 # Appendix
 
