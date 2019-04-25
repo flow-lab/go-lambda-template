@@ -48,5 +48,4 @@ Option | Description
 
 License
 -------
-
-This project is licensed under the terms of the [Mozilla Public License Version 2.0](/LICENSE)
+[![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)
