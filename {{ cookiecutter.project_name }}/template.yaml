@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
   {{ cookiecutter.lambda_name }} 
-  
+
   SAM Template for {{ cookiecutter.lambda_name }} - {{ cookiecutter.project_short_description }} 
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
@@ -13,9 +13,42 @@ Globals:
     AutoPublishAlias: live # More info about Safe Deployments: https://github.com/awslabs/serverless-application-model/blob/master/docs/safe_lambda_deployments.rst
     DeploymentPreference:
         Type: Linear10PercentEvery1Minute {% endif %}
+{% if cookiecutter.include_apigw == "y"%}
+  Api:
+    EndpointConfiguration: REGIONAL
+    TracingEnabled: true {% endif %}
 
 Resources:
-  {{ cookiecutter.lambda_name }}Function:
+{%- if cookiecutter.include_sns == "y" %}
+  SNSTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: "{{ cookiecutter.sns_topic_name }}"
+      KmsMasterKeyId: "alias/aws/sns" {% endif %}
+
+{% if cookiecutter.include_apigw == "y"%}
+  ApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      DefinitionBody:
+        Fn::Transform:
+          Name: AWS::Include
+          Parameters:
+            Location: ./api.yml {% endif %}
+
+  ConfigLambdaPermission:
+    Type: "AWS::Lambda::Permission"
+    DependsOn:
+      - ApiGateway
+      - Function
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref Function
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGateway}/*/*/*"
+
+  Function:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: {{ cookiecutter.lambda_name }}/
@@ -25,42 +58,43 @@ Resources:
       Tracing: Active {% endif %} # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
 {%- if cookiecutter.include_apigw == "y" %}
       Events:
-        CatchAll:
+        ApiGateway:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /hello
-            Method: GET {% endif %}
+            RestApiId: !Ref ApiGateway
+            Path: /
+            Method: ALL {% endif %}
       Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+{%- if cookiecutter.include_sns == "y" %}
         Variables:
-          PARAM1: VALUE
+          SNS: !Ref SNSTopic {% endif %}
 
-    # Sample policy to add additional permissions to your Lambda
-    {{ cookiecutter.lambda_name }}FunctionAdditionalPermission:
-        Type: "AWS::IAM::Policy"
-        Properties:
-            PolicyName: "root"
-            PolicyDocument:
-                Version: "2012-10-17"
-                Statement:
-                    -
-                        Effect: "Allow"
-                        Action: "ssm:GetParameters"
-                        Resource: "*"
-            Roles:
-                - !Ref {{ cookiecutter.lambda_name }}FunctionRole # Sample policy to demonstrate Implicit IAM Role created with SAM
+{%- if cookiecutter.include_sns == "y" %}
+  LambdaFunctionSendToSNS:
+    Type: "AWS::IAM::Policy"
+    Properties:
+        PolicyName: "send-to-sns"
+        PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+                - Effect: "Allow"
+                  Action: "sns:Publish"
+                  Resource: !Ref SNSTopic
+        Roles:
+            - !Ref FunctionRole {% endif %}
 
 Outputs:
 {% if cookiecutter.include_apigw == "y"%}
-  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-  # Find out more about other implicit resources you can reference within SAM
-  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   API:
     Description: "API Gateway endpoint URL for Prod environment for {{ cookiecutter.lambda_name }}Function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-{%- endif %}
-  {{ cookiecutter.lambda_name }}Function:
+    Value: !Sub "https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/Prod" {%- endif %}
+{% if cookiecutter.include_sns == "y"%}
+  SNS:
+    Description: "SNS that all events will be send to"
+    Value: !Ref SNSTopic {%- endif %}
+  LambdaFunction:
     Description: "Function ARN for {{ cookiecutter.lambda_name }}Function"
-    Value: !GetAtt {{ cookiecutter.lambda_name }}Function.Arn
-  {{ cookiecutter.lambda_name }}FunctionRole:
+    Value: !GetAtt Function.Arn
+  FunctionRole:
     Description: "Implicit IAM Role created for {{ cookiecutter.lambda_name }} function"
-    Value: !GetAtt {{ cookiecutter.lambda_name }}FunctionRole.Arn
+    Value: !GetAtt FunctionRole.Arn

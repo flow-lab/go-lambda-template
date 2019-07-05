@@ -2,10 +2,14 @@
 
 This is a sample template for {{ cookiecutter.lambda_name }} - Below is a brief explanation of what we have generated for you:
 
-```bash
+```shell
 .
 ├── Makefile                    <-- Make to automate build
 ├── README.md                   <-- This instructions file
+{%- if cookiecutter.include_apigw == "y" %}
+├── api.yml                     <-- OAS3 API definition {% endif %}
+├── go.mod                      <-- Defines the module’s module path
+├── go.sum                      <-- Contain the expected cryptographic hashes of the content of specific module versions
 ├── {{ cookiecutter.lambda_name }}                      <-- Source code for a lambda function
 │   ├── main.go                 <-- Lambda function code
 │   └── main_test.go            <-- Unit tests
@@ -15,7 +19,6 @@ This is a sample template for {{ cookiecutter.lambda_name }} - Below is a brief 
 ## Requirements
 
 * AWS CLI already configured with Administrator permission
-* [Docker installed](https://www.docker.com/community-edition)
 * [Golang](https://golang.org)
 
 ## Setup process
@@ -25,7 +28,7 @@ This is a sample template for {{ cookiecutter.lambda_name }} - Below is a brief 
 In this example we use the built-in `go get` and the only dependency we need is AWS Lambda Go SDK:
 
 ```shell
-go get -u github.com/aws/aws-lambda-go/...
+make deps
 ```
 
 **NOTE:** As you change your application code as well as dependencies during development, you might want to research how to handle dependencies in Golang at scale.
@@ -37,7 +40,7 @@ Golang is a statically compiled language, meaning that in order to run it you ha
 You can issue the following command in a shell to build it:
 
 ```shell
-GOOS=linux GOARCH=amd64 go build -o {{ cookiecutter.lambda_name }}/{{ cookiecutter.lambda_name }} ./{{ cookiecutter.lambda_name }}
+make build
 ```
 
 **NOTE**: If you're not building the function on a Linux machine, you will need to specify the `GOOS` and `GOARCH` environment variables, this allows Golang to build your function for another system architecture and ensure compatibility.
@@ -46,31 +49,32 @@ GOOS=linux GOARCH=amd64 go build -o {{ cookiecutter.lambda_name }}/{{ cookiecutt
 
 **Invoking function locally through local API Gateway**
 
-```bash
+```shell
 sam local start-api
 ```
 
-If the previous command ran successfully you should now be able to hit the following local endpoint to invoke your function `http://localhost:3000/hello`
+If the previous command ran successfully you should now be able to hit the following local endpoint to invoke your function `http://localhost:3000/event`
 
 **SAM CLI** is used to emulate both Lambda and API Gateway locally and uses our `template.yaml` to understand how to bootstrap this environment (runtime, where the source code is, etc.) - The following excerpt is what the CLI will read in order to initialize an API and its routes:
 
 ```yaml
 ...
 Events:
-    HelloWorld:
-        Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-        Properties:
-            Path: /hello
-            Method: get
+    ApiGateway:
+      Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+      Properties:
+        RestApiId: !Ref ApiGateway
+        Path: /
+        Method: ALL
 ```
 
 ## Packaging and deployment
 
-AWS Lambda Python runtime requires a flat folder with all dependencies including the application. SAM will use `CodeUri` property to know where to look up for both application and dependencies:
+AWS Lambda Go runtime requires a flat folder with all dependencies including the application. SAM will use `CodeUri` property to know where to look up for both application and dependencies:
 
 ```yaml
 ...
-    FirstFunction:
+    Function:
         Type: AWS::Serverless::Function
         Properties:
             CodeUri: {{ cookiecutter.lambda_name }}/
@@ -79,13 +83,13 @@ AWS Lambda Python runtime requires a flat folder with all dependencies including
 
 First and foremost, we need a `S3 bucket` where we can upload our Lambda functions packaged as ZIP before we deploy anything - If you don't have a S3 bucket to store code artifacts then this is a good time to create one:
 
-```bash
+```shell
 aws s3 mb s3://BUCKET_NAME
 ```
 
 Next, run the following command to package our Lambda function to S3:
 
-```bash
+```shell
 sam package \
     --output-template-file packaged.yaml \
     --s3-bucket REPLACE_THIS_WITH_YOUR_S3_BUCKET_NAME
@@ -93,10 +97,10 @@ sam package \
 
 Next, the following command will create a Cloudformation Stack and deploy your SAM resources.
 
-```bash
+```shell
 sam deploy \
     --template-file packaged.yaml \
-    --stack-name {{ cookiecutter.lambda_name }} \
+    --stack-name {{ cookiecutter.project_name }} \
     --capabilities CAPABILITY_IAM
 ```
 
@@ -104,9 +108,9 @@ sam deploy \
 
 After deployment is complete you can run the following command to retrieve the API Gateway Endpoint URL:
 
-```bash
+```shell
 aws cloudformation describe-stacks \
-    --stack-name {{ cookiecutter.lambda_name }} \
+    --stack-name {{ cookiecutter.project_name }} \
     --query 'Stacks[].Outputs'
 ``` 
 
@@ -115,7 +119,7 @@ aws cloudformation describe-stacks \
 We use `testing` package that is built-in in Golang and you can simply run the following command to run our tests:
 
 ```shell
-go test -v ./{{ cookiecutter.lambda_name }}/
+make test
 ```
 # Appendix
 
@@ -157,7 +161,7 @@ choco upgrade golang
 
 AWS CLI commands to package, deploy and describe outputs defined within the cloudformation stack:
 
-```bash
+```shell
 sam package \
     --template-file template.yaml \
     --output-template-file packaged.yaml \
@@ -165,10 +169,10 @@ sam package \
 
 sam deploy \
     --template-file packaged.yaml \
-    --stack-name {{ cookiecutter.lambda_name }} \
+    --stack-name {{ cookiecutter.project_name }} \
     --capabilities CAPABILITY_IAM \
     --parameter-overrides MyParameterSample=MySampleValue
 
 aws cloudformation describe-stacks \
-    --stack-name {{ cookiecutter.lambda_name }} --query 'Stacks[].Outputs'
+    --stack-name {{ cookiecutter.project_name }} --query 'Stacks[].Outputs'
 ```
