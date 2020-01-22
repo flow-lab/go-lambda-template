@@ -4,14 +4,17 @@ This is a sample template for {{ cookiecutter.lambda_name }} - Below is a brief 
 
 ```shell
 .
-├── Makefile                    <-- Make to automate build
-├── README.md                   <-- This instructions file
-├── go.mod                      <-- Defines the module’s module path
-├── go.sum                      <-- Contain the expected cryptographic hashes of the content of specific module versions
-├── {{ cookiecutter.lambda_name }}                      <-- Source code for a lambda function
-│   ├── main.go                 <-- Lambda function code
-│   └── main_test.go            <-- Unit tests
-└──
+├── .github                         <-- GitHub Actions for test, build and deployment
+├── infra                           <-- Terraform infrastructure
+├── Dockerfile                      <-- GitHub Actions is using to build in docker
+├── Makefile                        <-- Make to automate local build
+├── README.md                       <-- This instructions file
+├── go.mod                          <-- Defines the module’s module path
+├── go.sum                          <-- Contain the expected cryptographic hashes of the content of specific module versions
+├── {{ cookiecutter.lambda_name }}  <-- Source code for a lambda function
+.   ├── main.go                     <-- Lambda function code
+    └── main_test.go                <-- Unit tests
+
 ```
 
 ## Requirements
@@ -49,7 +52,13 @@ TODO:
 
 ## Packaging and deployment
 
-Done with terraform and Github Actions.
+Done with [terraform](./infra) and [Github Actions](./.github/workflows). 
+
+The GitHub secrets have to be for project
+
+* GITHUB_TOKEN - comment on PR
+* AWS_ACCESS_KEY_ID - service user key id
+* AWS_SECRET_ACCESS_KEY - service user access key
 
 ### Testing
 

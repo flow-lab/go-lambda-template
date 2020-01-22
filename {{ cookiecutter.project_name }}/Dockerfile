@@ -13,4 +13,4 @@ ARG GITHUB_SHA
 ARG VERSION
 
 RUN GOOS=linux GOARCH=amd64 go build -mod=readonly -ldflags="-w -s -X 'main.version=${VERSION}' -X 'main.commit=${GITHUB_SHA}' -X 'main.date=$(date)'" -o out/lambda ./{{ cookiecutter.lambda_name }}
-RUN zip deployment.zip out/lambda
+RUN zip -j deployment.zip out/*
