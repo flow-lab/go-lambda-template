@@ -1,0 +1,92 @@
+name: Build and Deploy to AWS
+on:
+  push:
+    branches:
+      - master
+
+env:
+  GITHUB_SHA: {% raw %}${{ github.sha }}{% endraw %}
+  AWS_REGION: {{ cookiecutter.aws_region }}
+
+jobs:
+  setup-build-deploy:
+    name: Setup, Build, Publish, and Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      # Setup project version
+      - name: Get version
+        id: version
+        run: |
+          VERSION="dev"
+          if [[ "${GITHUB_REF/refs\/tags\//}" != "refs/heads/"* ]] ; then
+            VERSION="${GITHUB_REF/refs\/tags\//}"
+          fi
+          echo ::set-output name=VERSION::${VERSION}
+
+      # Build the Docker image
+      - name: Build and zip artifact
+        run: |
+          IMG_NAME="build"
+          docker build -t ${IMG_NAME} \
+            --build-arg GITHUB_SHA="$GITHUB_SHA" \
+            --build-arg VERSION=${{ steps.version.outputs.VERSION }} .
+          CID=$(docker create ${IMG_NAME})
+          docker cp ${CID}:/go/src/app/deployment.zip .
+
+      # Terraform - infra and deploy
+      - name: 'Terraform Format'
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.12.19
+          tf_actions_subcommand: 'fmt'
+          tf_actions_working_dir: 'infra'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 'Terraform Init'
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.12.19
+          tf_actions_subcommand: 'init'
+          tf_actions_working_dir: 'infra'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: $AWS_REGION
+
+      - name: 'Terraform Validate'
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.12.19
+          tf_actions_subcommand: 'validate'
+          tf_actions_working_dir: 'infra'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 'Terraform Plan'
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.12.19
+          tf_actions_subcommand: 'plan'
+          tf_actions_working_dir: 'infra'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: $AWS_REGION
+
+      - name: 'Terraform Apply'
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.12.19
+          tf_actions_subcommand: 'apply'
+          tf_actions_working_dir: 'infra'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: $AWS_REGION

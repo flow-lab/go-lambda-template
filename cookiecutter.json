@@ -1,11 +1,8 @@
 {
   "project_name": "my-go-lambda",
+  "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '-') }}",
   "github_user": "flow-lab",
   "project_short_description": "A short description of the project",
   "lambda_name": "lambda",
-  "sns_topic_name": "topic",
-  "include_apigw": "y",
-  "include_sns": "y",
-  "include_xray": "y",
-  "include_safe_deployment": "y"
+  "aws_region": "eu-north-1"
 }

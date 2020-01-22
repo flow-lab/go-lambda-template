@@ -6,14 +6,12 @@ This is a sample template for {{ cookiecutter.lambda_name }} - Below is a brief 
 .
 ├── Makefile                    <-- Make to automate build
 ├── README.md                   <-- This instructions file
-{%- if cookiecutter.include_apigw == "y" %}
-├── api.yml                     <-- OAS3 API definition {% endif %}
 ├── go.mod                      <-- Defines the module’s module path
 ├── go.sum                      <-- Contain the expected cryptographic hashes of the content of specific module versions
 ├── {{ cookiecutter.lambda_name }}                      <-- Source code for a lambda function
 │   ├── main.go                 <-- Lambda function code
 │   └── main_test.go            <-- Unit tests
-└── template.yaml
+└──
 ```
 
 ## Requirements
@@ -47,72 +45,11 @@ make build
 
 ### Local development
 
-**Invoking function locally through local API Gateway**
-
-```shell
-sam local start-api
-```
-
-If the previous command ran successfully you should now be able to hit the following local endpoint to invoke your function `http://localhost:3000/event`
-
-**SAM CLI** is used to emulate both Lambda and API Gateway locally and uses our `template.yaml` to understand how to bootstrap this environment (runtime, where the source code is, etc.) - The following excerpt is what the CLI will read in order to initialize an API and its routes:
-
-```yaml
-...
-Events:
-    ApiGateway:
-      Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-      Properties:
-        RestApiId: !Ref ApiGateway
-        Path: /
-        Method: ALL
-```
+TODO: 
 
 ## Packaging and deployment
 
-AWS Lambda Go runtime requires a flat folder with all dependencies including the application. SAM will use `CodeUri` property to know where to look up for both application and dependencies:
-
-```yaml
-...
-    Function:
-        Type: AWS::Serverless::Function
-        Properties:
-            CodeUri: {{ cookiecutter.lambda_name }}/
-            ...
-```
-
-First and foremost, we need a `S3 bucket` where we can upload our Lambda functions packaged as ZIP before we deploy anything - If you don't have a S3 bucket to store code artifacts then this is a good time to create one:
-
-```shell
-aws s3 mb s3://BUCKET_NAME
-```
-
-Next, run the following command to package our Lambda function to S3:
-
-```shell
-sam package \
-    --output-template-file packaged.yaml \
-    --s3-bucket REPLACE_THIS_WITH_YOUR_S3_BUCKET_NAME
-```
-
-Next, the following command will create a Cloudformation Stack and deploy your SAM resources.
-
-```shell
-sam deploy \
-    --template-file packaged.yaml \
-    --stack-name {{ cookiecutter.project_name }} \
-    --capabilities CAPABILITY_IAM
-```
-
-> **See [Serverless Application Model (SAM) HOWTO Guide](https://github.com/awslabs/serverless-application-model/blob/master/HOWTO.md) for more details in how to get started.**
-
-After deployment is complete you can run the following command to retrieve the API Gateway Endpoint URL:
-
-```shell
-aws cloudformation describe-stacks \
-    --stack-name {{ cookiecutter.project_name }} \
-    --query 'Stacks[].Outputs'
-``` 
+Done with terraform and Github Actions.
 
 ### Testing
 
@@ -120,59 +57,4 @@ We use `testing` package that is built-in in Golang and you can simply run the f
 
 ```shell
 make test
-```
-# Appendix
-
-### Golang installation
-
-Please ensure Go 1.x (where 'x' is the latest version) is installed as per the instructions on the official golang website: https://golang.org/doc/install
-
-A quickstart way would be to use Homebrew, chocolatey or your linux package manager.
-
-#### Homebrew (Mac)
-
-Issue the following command from the terminal:
-
-```shell
-brew install golang
-```
-
-If it's already installed, run the following command to ensure it's the latest version:
-
-```shell
-brew update
-brew upgrade golang
-```
-
-#### Chocolatey (Windows)
-
-Issue the following command from the powershell:
-
-```shell
-choco install golang
-```
-
-If it's already installed, run the following command to ensure it's the latest version:
-
-```shell
-choco upgrade golang
-```
-## AWS CLI commands
-
-AWS CLI commands to package, deploy and describe outputs defined within the cloudformation stack:
-
-```shell
-sam package \
-    --template-file template.yaml \
-    --output-template-file packaged.yaml \
-    --s3-bucket REPLACE_THIS_WITH_YOUR_S3_BUCKET_NAME
-
-sam deploy \
-    --template-file packaged.yaml \
-    --stack-name {{ cookiecutter.project_name }} \
-    --capabilities CAPABILITY_IAM \
-    --parameter-overrides MyParameterSample=MySampleValue
-
-aws cloudformation describe-stacks \
-    --stack-name {{ cookiecutter.project_name }} --query 'Stacks[].Outputs'
 ```
