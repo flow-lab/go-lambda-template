@@ -4,7 +4,7 @@
 //}
 //
 //resource "aws_sns_topic_subscription" "sns" {
-//  topic_arn = data.aws_sns_topic.sns
+//  topic_arn = data.aws_sns_topic.sns.arn
 //  protocol  = "sqs"
 //  endpoint  = aws_sqs_queue.queue.arn
 //}
