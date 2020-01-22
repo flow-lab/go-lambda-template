@@ -4,5 +4,6 @@
   "github_user": "flow-lab",
   "project_short_description": "A short description of the project",
   "lambda_name": "lambda",
-  "aws_region": "eu-north-1"
+  "aws_region": "eu-north-1",
+  "terraform_state_s3": "flowlab-dev-terraform-state"
 }
