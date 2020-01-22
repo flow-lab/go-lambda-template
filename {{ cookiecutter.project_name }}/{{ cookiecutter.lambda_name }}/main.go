@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-lambda-go/lambdacontext"
@@ -15,11 +14,6 @@ import (
 )
 
 var (
-	// ErrTopicArn missing topic arn variable
-	ErrTopicArn = errors.New("missing topic arn - SNS env")
-	// ErrPublish SNS publish error
-	ErrPublish = errors.New("unable to publish event to SNS")
-
 	version = "dev"
 	commit  = "none"
 	date    = "unknown"
@@ -30,6 +24,8 @@ func handler(ctx context.Context, sqsEvent events.SQSEvent) error {
 	logger := dlog.NewStandardLogger(&dlog.LoggerParam{
 		AppName: name(lc.InvokedFunctionArn),
 		Trace:   xray.TraceID(ctx),
+		Version: version,
+		Commit:  commit,
 	})
 
 	logger.Infof("got request: %#v", sqsEvent)
