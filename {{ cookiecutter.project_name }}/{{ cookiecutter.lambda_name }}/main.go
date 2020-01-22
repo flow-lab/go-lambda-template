@@ -5,9 +5,6 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-lambda-go/lambdacontext"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/sns"
 	"github.com/aws/aws-xray-sdk-go/xray"
 	"github.com/flow-lab/dlog"
 	"strings"
@@ -21,20 +18,17 @@ var (
 
 func handler(ctx context.Context, sqsEvent events.SQSEvent) error {
 	lc, _ := lambdacontext.FromContext(ctx)
+	_ = xray.Configure(xray.Config{LogLevel: "trace"})
+
 	logger := dlog.NewStandardLogger(&dlog.LoggerParam{
 		AppName: name(lc.InvokedFunctionArn),
 		Trace:   xray.TraceID(ctx),
 		Version: version,
-		Commit:  commit,
+		Commit:  short(commit),
+		Build:   date,
 	})
 
 	logger.Infof("got request: %#v", sqsEvent)
-
-	config := &aws.Config{MaxRetries: aws.Int(10)}
-	sess := session.Must(session.NewSession())
-	client := sns.New(sess, config)
-	_ = xray.Configure(xray.Config{LogLevel: "trace"})
-	xray.AWS(client.Client)
 
 	for _, message := range sqsEvent.Records {
 		logger.Infof("the message %s for event source %s = %s \n", message.MessageId, message.EventSource, message.Body)
@@ -45,7 +39,17 @@ func handler(ctx context.Context, sqsEvent events.SQSEvent) error {
 }
 
 func name(arn string) string {
-	return strings.Split(arn, ":")[len(strings.Split(arn, ":"))-2]
+	if "" == arn {
+		return ""
+	}
+	return strings.Split(arn, ":")[len(strings.Split(arn, ":"))-1]
+}
+
+func short(s string) string {
+	if len(s) > 7 {
+		return s[0:7]
+	}
+	return s
 }
 
 func main() {

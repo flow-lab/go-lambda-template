@@ -14,8 +14,8 @@ github.com/davecgh/go-spew v0.0.0-20160907170601-6d212800a42e/go.mod h1:J7Y8YcW2
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/flow-lab/dlog v0.1.2 h1:V/Ba3EmQZ+au3Etk4hqPSEDgo/pUzO2BkdnTbPsiQgM=
-github.com/flow-lab/dlog v0.1.2/go.mod h1:Tso0ScE9o7eRpekedLqiLAxKY+CVNeA+9uWlDbjHJ+E=
+github.com/flow-lab/dlog v0.1.3 h1:Nf020kWwryqw5mG2HbSItUgvIV4r+HdqnX6/v7U4O5M=
+github.com/flow-lab/dlog v0.1.3/go.mod h1:Tso0ScE9o7eRpekedLqiLAxKY+CVNeA+9uWlDbjHJ+E=
 github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af h1:pmfjZENx5imkbgOkpRUYLnmbU7UEFbjtDA2hxJ1ichM=
 github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af/go.mod h1:Nht3zPeWKUH0NzdCt2Blrr5ys8VGpn0CEB0cQHVjt7k=
 github.com/konsorten/go-windows-terminal-sequences v1.0.1 h1:mweAR1A6xJ3oS2pRaGiHgQ4OO8tzTaLawm8vnODuwDk=
