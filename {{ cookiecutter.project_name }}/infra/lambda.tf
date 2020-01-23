@@ -122,6 +122,32 @@ resource "aws_iam_role_policy_attachment" "sqs" {
   policy_arn = aws_iam_policy.sqs.arn
 }
 
+resource "aws_iam_policy" "kms" {
+  name        = "kms"
+  path        = "/"
+  description = "IAM policy for decrypting messages"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "kms:Decrypt"
+      ],
+      "Resource": "${aws_kms_key.key.arn}",
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "kms" {
+  role       = aws_iam_role.role.name
+  policy_arn = aws_iam_policy.kms.arn
+}
+
 resource "aws_lambda_event_source_mapping" "sqs" {
   event_source_arn = aws_sqs_queue.queue.arn
   function_name    = aws_lambda_function.lambda.arn
