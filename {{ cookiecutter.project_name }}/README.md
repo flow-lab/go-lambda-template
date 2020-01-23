@@ -1,6 +1,16 @@
 # {{ cookiecutter.lambda_name }}
 
-This is a sample template for {{ cookiecutter.lambda_name }} - Below is a brief explanation of what we have generated for you:
+{{ cookiecutter.project_short_description }}
+
+Lambda features:
+
+* Fast and minimal resource usage
+* Full CI/CD with Terraform and GitHub Actions
+* Terraform plan on Pull Request
+* Structured logs with (commit sha, version, build date ...). Datadog friendly.
+* XRay support
+
+Below is a brief explanation of what we have generated for you using [go-lambda-template](https://github.com/flow-lab/go-lambda-template):
 
 ```shell
 .
@@ -14,12 +24,10 @@ This is a sample template for {{ cookiecutter.lambda_name }} - Below is a brief 
 ├── {{ cookiecutter.lambda_name }}  <-- Source code for a lambda function
 .   ├── main.go                     <-- Lambda function code
     └── main_test.go                <-- Unit tests
-
 ```
 
 ## Requirements
 
-* AWS CLI already configured with Administrator permission
 * [Golang](https://golang.org)
 
 ## Setup process
