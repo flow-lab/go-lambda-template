@@ -6,6 +6,7 @@ Lambda features:
 
 * Fast and minimal resource usage
 * Full CI/CD with Terraform and GitHub Actions
+* Build in Docker
 * Terraform plan on Pull Request
 * Structured logs with (commit sha, version, build date ...). Datadog friendly.
 * XRay support
