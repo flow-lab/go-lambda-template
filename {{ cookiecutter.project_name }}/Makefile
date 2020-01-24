@@ -13,7 +13,7 @@ test:
 	@go test -covermode=atomic -installsuffix "static" ./...
 
 clean: 
-	rm -rf ./{{ cookiecutter.lambda_name }}/{{ cookiecutter.lambda_name }}
+	rm -rf ./cmd/{{ cookiecutter.lambda_name }}/{{ cookiecutter.lambda_name }}
 	
 build: vet test
-	GOOS=linux GOARCH=amd64 go build -o {{ cookiecutter.lambda_name }}/{{ cookiecutter.lambda_name }} ./{{ cookiecutter.lambda_name }}
+	GOOS=linux GOARCH=amd64 go build -o ./cmd/{{ cookiecutter.lambda_name }}/{{ cookiecutter.lambda_name }} ./cmd/{{ cookiecutter.lambda_name }}

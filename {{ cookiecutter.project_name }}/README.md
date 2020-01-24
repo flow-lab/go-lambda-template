@@ -23,7 +23,7 @@ Below is a brief explanation of what we have generated for you using [go-lambda-
 ├── README.md                       <-- This instructions file
 ├── go.mod                          <-- Defines the module’s module path
 ├── go.sum                          <-- Contain the expected cryptographic hashes of the content of specific module versions
-├── {{ cookiecutter.lambda_name }}  <-- Source code for a lambda function
+├── cmd/{{ cookiecutter.lambda_name }}  <-- Source code for a lambda function
 .   ├── main.go                     <-- Lambda function code
     └── main_test.go                <-- Unit tests
 ```

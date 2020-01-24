@@ -24,11 +24,33 @@ Install `cookiecutter` command line:
 
 ## Usage
 
-Generate a new AWS Go Lambda: `cookiecutter gh:flow-lab/go-lambda-template`. 
+Generate a new AWS Go Lambda: `cookiecutter gh:flow-lab/go-lambda-template` (or if you want to authenticate with ssh: `cookiecutter git+ssh://git@github.com/flow-lab/go-lambda-template)`.
 
 You'll be prompted a few questions to help this cookiecutter template to scaffold this project and after its completed you should see a new folder at your current path with the name of the project you gave as input.
 
+After project has been generated, cd into it and push to github (make sure you have created the repository first):
+
+```
+$ cd <project-name>
+$ git init .
+$ git remote add origin git@github.com:<github-user>/<project-name>.git
+$ git add . && git commit -m 'Initial commit' && git push origin master
+```
+
 **NOTE**: After you understand how cookiecutter works (cookiecutter.json, mainly), you can fork this repo and apply your own mechanisms to accelerate your development process and this can be followed for any programming language and OS.
+
+## Options
+
+Option | Description
+------------------------------------------------- | ---------------------------------------------------------------------------------
+`project_name`              | Project name
+`project_slug`              | Project slug
+`github_user`               | The GitHub user 
+`project_short_description` | The project short description
+`lambda_name`               | Lambda name
+`aws_region`                | The aws region for deployment
+`terraform_state_s3`        | The terraform state s3 bucket
+`terraform_version`         | The terraform version
 
 # Credits
 
