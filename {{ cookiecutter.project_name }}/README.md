@@ -64,9 +64,8 @@ TODO:
 
 Done with [terraform](./infra) and [Github Actions](./.github/workflows). 
 
-The GitHub secrets have to be for project
+The GitHub Secrets have to be imported:
 
-* GITHUB_TOKEN - comment on PR
 * AWS_ACCESS_KEY_ID - service user key id
 * AWS_SECRET_ACCESS_KEY - service user access key
 
