@@ -60,11 +60,11 @@ make build
 
 TODO: 
 
-## Packaging and deployment
+## Requirements
 
-Done with [terraform](./infra) and [Github Actions](./.github/workflows). 
+Terraform s3 state bucket has to be already created.
 
-The GitHub Secrets have to be imported:
+[GitHub Actions](./github/workflows/) requires GitHub Secrets for the project:
 
 * AWS_ACCESS_KEY_ID - service user key id
 * AWS_SECRET_ACCESS_KEY - service user access key
