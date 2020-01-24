@@ -18,7 +18,7 @@ Below is a brief explanation of what we have generated for you using [go-lambda-
 .
 ├── .github                         <-- GitHub Actions for test, build and deployment
 ├── infra                           <-- Terraform infrastructure
-├── Dockerfile                      <-- GitHub Actions is using to build in docker
+├── Dockerfile                      <-- GitHub Actions build in docker definition
 ├── Makefile                        <-- Make to automate local build
 ├── README.md                       <-- This instructions file
 ├── go.mod                          <-- Defines the module’s module path
