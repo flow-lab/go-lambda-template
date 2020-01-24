@@ -1,6 +1,6 @@
 # go-lambda-template
 
-This is a [Cookiecutter](https://github.com/audreyr/cookiecutter) template to create a Serverless App based on Serverless Application Model (SAM) and Go.
+This is a [Cookiecutter](https://github.com/audreyr/cookiecutter) template to create a Go AWS Lambda with Terraform deployment and infrastructure.
 
 It is important to note that you should not try to `git clone` this project but use `cookiecutter` CLI instead as ``{{cookiecutter.project_slug}}`` will be rendered based on your input and therefore all variables and files will be rendered properly.
 
@@ -24,7 +24,7 @@ Install `cookiecutter` command line:
 
 ## Usage
 
-Generate a new SAM based Serverless App: `cookiecutter gh:flow-lab/go-lambda-template`. 
+Generate a new AWS Go Lambda: `cookiecutter gh:flow-lab/go-lambda-template`. 
 
 You'll be prompted a few questions to help this cookiecutter template to scaffold this project and after its completed you should see a new folder at your current path with the name of the project you gave as input.
 
@@ -33,7 +33,6 @@ You'll be prompted a few questions to help this cookiecutter template to scaffol
 # Credits
 
 * This project has been generated with [Cookiecutter](https://github.com/audreyr/cookiecutter)
-* [Cookiecutter SAM for Python Lambda functions](https://github.com/aws-samples/cookiecutter-aws-sam-python)
 
 
 License
