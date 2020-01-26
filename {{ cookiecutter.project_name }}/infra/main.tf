@@ -3,6 +3,11 @@ data "aws_caller_identity" "current" {}
 
 provider "aws" {
   version = "~> 2.46"
+
+  //  assume_role {
+  //    role_arn     = "arn:aws:iam::ACCOUNT_ID:role/terraform"
+  //    session_name = "terraform-{{ cookiecutter.project_slug }}"
+  //  }
 }
 
 terraform {
