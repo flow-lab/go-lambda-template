@@ -1,6 +1,6 @@
 .PHONY: deps clean build
 
-IMG_NAME="{{ cookiecutter.lambda_name }}-build"
+IMG_NAME="{{ cookiecutter.project_name }}-build"
 
 deps:
 	@go get -u ./...
