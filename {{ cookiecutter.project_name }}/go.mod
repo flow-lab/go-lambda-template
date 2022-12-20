@@ -1,4 +1,4 @@
-module github.com/my/repo
+module github.com/{{ cookiecutter.github_user }}/{{ cookiecutter.project_name }}
 
 go 1.19
 
