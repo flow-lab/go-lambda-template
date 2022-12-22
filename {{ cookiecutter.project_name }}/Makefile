@@ -1,6 +1,7 @@
 .PHONY: deps clean build
 
-IMG_NAME="{{ cookiecutter.project_name }}-build"
+GITHUB_SHA=$(shell git rev-parse --short HEAD)
+VERSION=$(shell git describe --tags --always --dirty)
 
 deps:
 	@go get -u ./...
@@ -14,10 +15,13 @@ fmt:
 test:
 	@go test -covermode=atomic -installsuffix "static" ./...
 
-clean: 
+clean:
 	rm -rf ./cmd/{{ cookiecutter.lambda_name }}/{{ cookiecutter.lambda_name }}
 
+build-local: vet fmt
+	rm deployment.zip || true && \
+  	GOOS=linux GOARCH=amd64 go build -o out/lambda ./cmd/lambda && \
+  	zip -j deployment.zip out/*
+
 build: vet fmt
-	docker image rm -f ${IMG_NAME} || true && \
-	docker build -t ${IMG_NAME} --build-arg GITHUB_SHA=${GITHUB_SHA} --build-arg VERSION=0.1.0 . && \
-	docker cp $(shell docker create ${IMG_NAME}):/go/src/app/deployment.zip .
+	./build.sh ${GITHUB_SHA} ${VERSION}
