@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/aws/aws-lambda-go v1.36.1
 	github.com/aws/aws-xray-sdk-go v1.8.0
-	github.com/flow-lab/dlog v0.1.4
+	github.com/flow-lab/dlog v1.0.3
 	github.com/stretchr/testify v1.8.0
 // just in case
 //github.com/aws/aws-sdk-go-v2/config v1.17.9

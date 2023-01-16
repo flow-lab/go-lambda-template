@@ -20,7 +20,7 @@ func handler(ctx context.Context, sqsEvent events.SQSEvent) error {
 	lc, _ := lambdacontext.FromContext(ctx)
 	_ = xray.Configure(xray.Config{LogLevel: "trace"})
 
-	logger := dlog.NewStandardLogger(&dlog.LoggerParam{
+	logger := dlog.NewLogger(&dlog.Config{
 		AppName: name(lc.InvokedFunctionArn),
 		Trace:   xray.TraceID(ctx),
 		Version: version,
