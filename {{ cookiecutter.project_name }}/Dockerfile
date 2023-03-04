@@ -1,4 +1,4 @@
-FROM golang:1.19-alpine3.16@sha256:46752c2ee3bd8388608e41362964c84f7a6dffe99d86faeddc82d917740c5968 as builder
+FROM golang:1.20-alpine3.17 as builder
 
 RUN apk update && apk upgrade && \
     apk add --no-cache openssh zip \
