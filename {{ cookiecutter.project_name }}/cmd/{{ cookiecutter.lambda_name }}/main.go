@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-lambda-go/lambdacontext"
 	"github.com/aws/aws-xray-sdk-go/xray"
 	"github.com/flow-lab/dlog"
+	utils "github.com/flow-lab/utils"
 	"strings"
 )
 
@@ -18,14 +19,15 @@ var (
 
 func handler(ctx context.Context, sqsEvent events.SQSEvent) error {
 	lc, _ := lambdacontext.FromContext(ctx)
-	_ = xray.Configure(xray.Config{LogLevel: "trace"})
+	_ = xray.Configure(xray.Config{LogLevel: utils.EnvOrDefault("LOG_LEVEL", "trace")})
 
 	logger := dlog.NewLogger(&dlog.Config{
-		AppName: name(lc.InvokedFunctionArn),
-		Trace:   xray.TraceID(ctx),
-		Version: version,
-		Commit:  short(commit),
-		Build:   date,
+		AppName:      name(lc.InvokedFunctionArn),
+		Trace:        xray.TraceID(ctx),
+		Version:      version,
+		Commit:       utils.Short(commit),
+		ReportCaller: true,
+		Build:        date,
 	})
 
 	logger.Infof("got request: %#v", sqsEvent)
@@ -43,13 +45,6 @@ func name(arn string) string {
 		return ""
 	}
 	return strings.Split(arn, ":")[len(strings.Split(arn, ":"))-1]
-}
-
-func short(s string) string {
-	if len(s) > 7 {
-		return s[0:7]
-	}
-	return s
 }
 
 func main() {
